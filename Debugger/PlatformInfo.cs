@@ -474,7 +474,10 @@ namespace Microsoft.SPOT.Debugger
 					//Add the framework assemblies
 					AppendFolder(folders, this.FrameworkAssembliesPath);
 
-					AppendFolders(folders, Registry.LocalMachine);
+					try {
+						// This might not work on some system
+						AppendFolders (folders, Registry.LocalMachine);
+					} catch (System.Security.SecurityException) {}
 					AppendFolders(folders, Registry.CurrentUser);
 
 					m_assemblyFolders = folders.ToArray();
