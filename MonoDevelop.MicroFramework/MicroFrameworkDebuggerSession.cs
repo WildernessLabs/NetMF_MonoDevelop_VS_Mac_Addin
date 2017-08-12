@@ -182,6 +182,7 @@ namespace MonoDevelop.MicroFramework
 			var mfStartInfo = startInfo as MicroFrameworkDebuggerStartInfo;
 			if(mfStartInfo == null)//This should never happen...
 				throw new InvalidOperationException();
+			VsPackage.MessageCentre.Session = this;
 			var command = mfStartInfo.MFCommand;
 			var portDefinition = ((MicroFrameworkExecutionTarget)command.Target).PortDefinition;
 			try
@@ -316,7 +317,6 @@ namespace MonoDevelop.MicroFramework
 					startInfo.Command = newCommand;
 					engine.RebootDevice(Engine.RebootOption.RebootClrWaitForDebugger);
 				}
-				VsPackage.MessageCentre.Session = this;
 				try
 				{
 					CorDebugProcess process = CorDebugProcess.CreateProcess(new DebugPortSupplier().FindPort("USB"), startInfo.Command);
@@ -335,7 +335,8 @@ namespace MonoDevelop.MicroFramework
 			}
 			catch(Exception e)
 			{
-
+				VsPackage.MessageCentre.DeploymentMsg(DiagnosticStrings.DeployFailed);
+				VsPackage.MessageCentre.InternalErrorMsg(false, e.ToString ());
 			}
 		}
 
