@@ -102,10 +102,6 @@ namespace Microsoft.SPOT.Debugger
 					pathPE = Path.ChangeExtension (pathDll, "pe");
 				}
 				if (!File.Exists (pathPE)) {
-					// For user applications in v3.0 the pe file is found in the object directory 
-					pathPE = pathPE.ToLower ().Replace ("\\bin\\", "\\obj\\");
-				}
-				if (!File.Exists (pathPE)) {
 					//this is a hack to find the pe....
 					//in our build system, back up one directory and look in the pe folder
 					string fileName = Path.GetFileName (pathPE);
