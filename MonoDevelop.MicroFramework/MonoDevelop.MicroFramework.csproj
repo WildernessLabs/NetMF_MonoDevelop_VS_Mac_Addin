@@ -136,15 +136,9 @@
 		</None>
 		<None Include="packages.config" />
 	</ItemGroup>
-	<PropertyGroup Condition="$(OS)!='Unix'">
-		<MacPlatform />
-	</PropertyGroup>
-	<PropertyGroup Condition="$(OS)=='Unix'">
-		<MacPlatform>MonoDevelop.MacPlatform</MacPlatform>
-	</PropertyGroup>
 	<ItemGroup>
 		<AddinReference Include="MonoDevelop.Debugger" />
-		<AddinReference Include="$(MacPlatform)" />
+		<AddinReference Include="$(MacPlatform)" Condition=" '$(OS)' == 'OSX' " />
 	</ItemGroup>
 	<Import Project="..\packages\MonoDevelop.Addins.0.3.18\build\MonoDevelop.Addins.targets" Condition="Exists('..\packages\MonoDevelop.Addins.0.3.18\build\MonoDevelop.Addins.targets')" />
 </Project>
