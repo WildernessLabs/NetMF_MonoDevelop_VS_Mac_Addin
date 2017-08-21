@@ -1,11 +1,6 @@
 ﻿using Mono.Debugging.Client;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Debugger;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoDevelop.MicroFramework
 {
