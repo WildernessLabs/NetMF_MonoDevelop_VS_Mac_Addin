@@ -54,12 +54,12 @@ namespace MonoDevelop.MicroFramework
 			return framework.Id.Identifier == ".NETMicroFramework";
 		}
 
-		protected override bool OnGetCanExecute (ExecutionContext context, ConfigurationSelector configuration)
+		protected override bool OnGetCanExecute (ExecutionContext context, ConfigurationSelector configuration, SolutionItemRunConfiguration runConfiguration)
 		{
 			if (IdeApp.Workspace.GetAllSolutions ().Any ((s) => s.StartupItem == this.Project)) {
-				return context.ExecutionTarget is MicroFrameworkExecutionTarget && base.OnGetCanExecute (context, configuration);
+				return context.ExecutionTarget is MicroFrameworkExecutionTarget && base.OnGetCanExecute (context, configuration, runConfiguration);
 			} else {
-				return base.OnGetCanExecute (context, configuration);
+				return base.OnGetCanExecute (context, configuration, runConfiguration);
 			}
 		}
 
@@ -77,19 +77,24 @@ namespace MonoDevelop.MicroFramework
 		protected override void Initialize ()
 		{
 			base.Initialize ();
-			Project.ProjectProperties.SetValue ("NetMfTargetsBaseDir", "$(MSBuildExtensionsPath32)\\Microsoft\\.NET Micro Framework\\", condition: "'$(NetMfTargetsBaseDir)'==''");
+			FrameworkSetup.Run ();
+			var targetsBaseDir = "$(MSBuildExtensionsPath32)\\Microsoft\\.NET Micro Framework\\";
+			if (!Platform.IsWindows)
+				targetsBaseDir = "$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))\\.NETMicroFramework\\xbuild\\Microsoft\\.NET Micro Framework\\";
+			Project.ProjectProperties.SetValue ("NetMfTargetsBaseDir", targetsBaseDir, condition: "'$(NetMfTargetsBaseDir)'==''");
 			Project.RemoveImport ("$(MSBuildBinPath)\\Microsoft.CSharp.targets");
 			Project.AddImportIfMissing ("$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\\CSharp.Targets", "");
 		}
 
-		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
+		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration, ProjectRunConfiguration runConfiguration)
 		{
 			var references = Project.GetReferencedAssemblies (configSel, true).ContinueWith (t => {
 				return t.Result.Select<AssemblyReference, string> ((r) => {
 					if (r.FilePath.IsAbsolute)
 						return r.FilePath;
 					return Project.GetAbsoluteChildPath (r.FilePath).FullPath;
-				}).ToList();});
+				}).ToList ();
+			});
 			return new MicroFrameworkExecutionCommand () {
 				OutputDirectory = configuration.OutputDirectory,
 				ReferencedAssemblies = references
