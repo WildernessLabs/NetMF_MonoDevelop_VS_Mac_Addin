@@ -76,10 +76,11 @@ namespace MonoDevelop.MicroFramework
 					if(path != null)
 					{
 						string filename = Path.GetFileName(path);
+						char sep = Path.DirectorySeparatorChar;
 
 						// When changing target frameworks in VS2010, sometimes VS tells us we are dependent
 						// on a GAC version of mscorlib (in addition to our own mscorlib), so ignore it.
-						if(path.ToLower().Contains("\\gac\\") || path.ToLower().Contains("\\gac_64\\"))
+						if(path.ToLower().Contains(sep + "gac" + sep) || path.ToLower().Contains(sep + "gac_64" + sep))
 						{
 							continue;
 						}

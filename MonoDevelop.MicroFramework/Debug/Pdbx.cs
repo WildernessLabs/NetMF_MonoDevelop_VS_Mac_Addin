@@ -215,7 +215,8 @@ namespace Microsoft.SPOT.Debugger
                     {
                         if (fIsTargetBigEndian)
                         {
-                            file = OpenHelper(name, version, assemblyDirectories, @"..\pe\be");
+                            file = OpenHelper(name, version, assemblyDirectories,
+                                              Path.Combine ("..", "pe", "be"));
 
                             if (file == null)
                             {
@@ -224,7 +225,8 @@ namespace Microsoft.SPOT.Debugger
                         }
                         else
                         {
-                            file = OpenHelper(name, version, assemblyDirectories, @"..\pe\le");
+                            file = OpenHelper(name, version, assemblyDirectories,
+                                              Path.Combine ("..", "pe", "le"));
 
                             if (file == null)
                             {

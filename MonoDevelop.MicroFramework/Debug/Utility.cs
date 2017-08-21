@@ -112,13 +112,13 @@ namespace Microsoft.SPOT.Debugger
 							break;
                         
 						if (fTargetIsBigEndian) {
-							pathPE = Path.Combine (Path.Combine (path, @"..\pe\be"), fileName);
+							pathPE = Path.Combine (Path.Combine (path, "..", "pe", "be"), fileName);
 
 							if (!File.Exists (pathPE)) {
 								pathPE = Path.Combine (Path.Combine (path, "be"), fileName);
 							}
 						} else {
-							pathPE = Path.Combine (Path.Combine (path, @"..\pe\le"), fileName);
+							pathPE = Path.Combine (Path.Combine (path, "..", "pe", "le"), fileName);
 
 							if (!File.Exists (pathPE)) {
 								pathPE = Path.Combine (Path.Combine (path, "le"), fileName);

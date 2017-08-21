@@ -41,7 +41,7 @@ namespace Microsoft.SPOT.Debugger
 				if (!string.IsNullOrEmpty (pdbxFile.PdbxPath)) {
 					string pth = pdbxFile.PdbxPath.ToLower ();
 
-					if (pth.Contains (@"\buildoutput\")) {
+					if (pth.Contains (Path.DirectorySeparatorChar + "buildoutput" + Path.DirectorySeparatorChar)) {
 #region V4_1_FRAMEWORK_ASSEMBLIES
 						List<string> frameworkAssemblies = new List<string> {
 							"mfdpwsclient",
@@ -155,9 +155,9 @@ namespace Microsoft.SPOT.Debugger
 					// Look next to pdbx file
 					Path.Combine (Path.GetDirectoryName (m_pdbxFile.PdbxPath), m_pdbxAssembly.FileName),
 					// look next to the dll for the SDK (C:\Program Files\Microsoft .NET Micro Framework\<version>\Assemblies\le|be)
-					Path.Combine (Path.GetDirectoryName (m_pdbxFile.PdbxPath), @"..\" + m_pdbxAssembly.FileName),
+					Path.Combine (Path.GetDirectoryName (m_pdbxFile.PdbxPath), "..", m_pdbxAssembly.FileName),
 					// look next to the dll for the PK (SPOCLIENT\buildoutput\public\<buildtype>\client\pe\le|be)
-					Path.Combine (Path.GetDirectoryName (m_pdbxFile.PdbxPath), @"..\..\dll\" + m_pdbxAssembly.FileName),
+					Path.Combine (Path.GetDirectoryName (m_pdbxFile.PdbxPath), "..", "..", "dll", m_pdbxAssembly.FileName),
 				};
 
 				for (int iPath = 0; iPath < pathsToTry.Length; iPath++) {
