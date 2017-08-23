@@ -203,7 +203,7 @@ namespace Microsoft.SPOT.Debugger
 			return Assembly.MetaData != null ? Assembly.MetaData.LookupToken ((int)Token) as MethodDefinition : null;
 		}
 
-		public MethodSymbols GetMethodSymbols (MicroFrameworkDebuggerSession session)
+		/*public MethodSymbols GetMethodSymbols (MicroFrameworkDebuggerSession session)
 		{
 			if (Assembly.DebugData == null)
 				return null;
@@ -215,6 +215,6 @@ namespace Microsoft.SPOT.Debugger
 			}
 			Assembly.DebugData.Read (methodSymols);
 			return methodSymols;
-		}
+		}*/
 	}
 }
