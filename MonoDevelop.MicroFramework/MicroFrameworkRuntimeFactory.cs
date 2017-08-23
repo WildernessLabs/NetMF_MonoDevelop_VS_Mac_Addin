@@ -13,9 +13,12 @@ namespace MonoDevelop.MicroFramework
 		static MicroFrameworkRuntimeFactory ()
 		{
 			/* We use this tricky to run before MonoTargetRuntimeFactory
-			 * so that we can insert our extra paths via environment variables
+			 * so that we can setup the framework locally and inject
+			 * the extra reference assembly path via environment variable
 			 */
 			if (!Platform.IsWindows) {
+				FrameworkSetup.Run ();
+
 				const string ExtraFrameworkEnvironmentName = "XBUILD_FRAMEWORK_FOLDERS_PATH";
 				var existingValue = Environment.GetEnvironmentVariable (ExtraFrameworkEnvironmentName);
 				var extraFramework = Path.Combine (FrameworkSetup.InstallRoot, "xbuild-framework");

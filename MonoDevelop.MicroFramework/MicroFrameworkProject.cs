@@ -77,7 +77,6 @@ namespace MonoDevelop.MicroFramework
 		protected override void Initialize ()
 		{
 			base.Initialize ();
-			FrameworkSetup.Run ();
 			var targetsBaseDir = "$(MSBuildExtensionsPath32)\\Microsoft\\.NET Micro Framework\\";
 			if (!Platform.IsWindows)
 				targetsBaseDir = "$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))\\.NETMicroFramework\\xbuild\\Microsoft\\.NET Micro Framework\\";
