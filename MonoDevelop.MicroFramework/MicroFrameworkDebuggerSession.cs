@@ -433,30 +433,12 @@ namespace MonoDevelop.MicroFramework
 
 		void Step(bool into)
 		{
-			try
-			{
-				if(stepper != null)
-				{
+			try {
+				if (stepper != null) {
 					//stepper.IsActive ();//no meaning?
 					CorDebugFrame frame = activeThread.ActiveFrame;
-					var reader = frame.Function.Assembly.DebugData;
-					if(reader == null)
-					{
-						RawContinue(into);
-						return;
-					}
-
-
-					var met = new MethodSymbols(new MetadataToken(frame.Function.Token));
-					//Ugliest hack ever
-					if(reader is Mono.Cecil.Mdb.MdbReader)
-					{
-						for(int i = 0; i < 100; i++)
-							met.Variables.Add(new VariableDefinition(null));
-					}
-					reader.Read(met);
-
-					if(met == null || met.Instructions.Count == 0)
+					var met = frame.Function.GetMethodInfo (this)?.DebugInformation;
+					if (met == null || !met.HasSequencePoints)
 					{
 						RawContinue(into);
 						return;
@@ -465,19 +447,19 @@ namespace MonoDevelop.MicroFramework
 					// Find the current line
 					var range = new COR_DEBUG_STEP_RANGE();
 					int currentLine = -1;
-					foreach(var sp in met.Instructions)
+					foreach(var sp in met.SequencePoints)
 					{
 						if(sp.Offset > frame.IP)
 						{
 							if(currentLine == -1)
 							{
-								currentLine = sp.SequencePoint.StartLine;
+								currentLine = sp.StartLine;
 								range.startOffset = frame.IP;
 								range.endOffset = (uint)sp.Offset;
 							}
 							else
 							{
-								if(sp.SequencePoint.StartLine == currentLine)
+								if(sp.StartLine == currentLine)
 								{
 									range.endOffset = (uint)sp.Offset;
 								}
@@ -555,7 +537,7 @@ namespace MonoDevelop.MicroFramework
 				set;
 			}
 
-			public MethodSymbols GetClosestMethod(int line)
+			public MethodDebugInformation GetClosestMethod(int line)
 			{
 				for(int i = 0; i < methods.Count; i++)
 				{
@@ -592,21 +574,21 @@ namespace MonoDevelop.MicroFramework
 			{
 				public int startLine;
 				public int endLine;
-				public MethodSymbols symbols;
+				public MethodDebugInformation symbols;
 			}
 
 			List<Method> methods = new List<Method>();
 			//For now I'm asuming there is no overlapping...(Is it even posible?) Delegate implementation inside method?
-			public void AddMethod(MethodDefinition m, MethodSymbols methodSymbols)
+			public void AddMethod(MethodDefinition m, MethodDebugInformation methodSymbols)
 			{
 				int startLine = int.MaxValue;
 				int endLine = -1;
-				foreach(var instr in methodSymbols.Instructions)
+				foreach(var seqPoint in methodSymbols.SequencePoints)
 				{
-					if(instr.SequencePoint.StartLine > 0 && instr.SequencePoint.StartLine < startLine)
-						startLine = instr.SequencePoint.StartLine;
-					if(instr.SequencePoint.EndLine < 1000000 && instr.SequencePoint.EndLine > endLine)
-						endLine = instr.SequencePoint.EndLine;
+					if(seqPoint.StartLine > 0 && seqPoint.StartLine < startLine)
+						startLine = seqPoint.StartLine;
+					if(seqPoint.EndLine < 1000000 && seqPoint.EndLine > endLine)
+						endLine = seqPoint.EndLine;
 				}
 				for(int i = 0; i < methods.Count; i++)
 				{
@@ -653,12 +635,12 @@ namespace MonoDevelop.MicroFramework
 						return binfo;
 					}
 
-					MethodSymbols met = doc.GetClosestMethod(bp.Line);
+					var met = doc.GetClosestMethod(bp.Line);
 
 					int offset = -1;
-					foreach(var sp in met.Instructions)
+					foreach(var sp in met.SequencePoints)
 					{
-						if(sp.SequencePoint.StartLine == bp.Line)
+						if(sp.StartLine == bp.Line)
 						{
 							offset = sp.Offset;
 							break;
@@ -666,13 +648,13 @@ namespace MonoDevelop.MicroFramework
 					}
 					if(offset == -1)
 					{
-						if(bp.Line < met.Instructions.First().SequencePoint.StartLine)
-							offset = met.Instructions.First().Offset;
+						if(bp.Line < met.SequencePoints.First().StartLine)
+							offset = met.SequencePoints.First().Offset;
 						else
-							offset = met.Instructions.Last().Offset;
+							offset = met.SequencePoints.Last().Offset;
 					}
 
-					CorDebugFunction func = doc.Assembly.GetFunctionFromTokenCLR(met.MethodToken.ToUInt32());
+					CorDebugFunction func = doc.Assembly.GetFunctionFromTokenCLR(met.Method.MetadataToken.ToUInt32());
 					CorDebugFunctionBreakpoint corBp = func.ILCode.CreateBreakpoint((uint)offset);
 					corBp.Active = bp.Enabled;
 
@@ -915,20 +897,13 @@ namespace MonoDevelop.MicroFramework
 						{
 							foreach(var m in t.Methods)
 							{
-								var methodSymbols = new MethodSymbols(m.MetadataToken);
-								//Ugly hack
-								if(reader is Mono.Cecil.Mdb.MdbReader)
-								{
-									foreach(var variable in m.Body.Variables)
-										methodSymbols.Variables.Add(variable);
-								}
-								reader.Read(methodSymbols);
-								if(methodSymbols.Instructions.Count == 0)
+								var methodSymbols = m.DebugInformation;
+								if(!methodSymbols.HasSequencePoints)
 									continue;
 								DocInfo document;
-								if(!documents.TryGetValue(methodSymbols.Instructions[0].SequencePoint.Document.Url, out document))
+								if(!documents.TryGetValue(methodSymbols.SequencePoints[0].Document.Url, out document))
 								{
-									document = new DocInfo(methodSymbols.Instructions[0].SequencePoint.Document.Url);
+									document = new DocInfo(methodSymbols.SequencePoints[0].Document.Url);
 									document.Assembly = pAssembly;
 									documents.Add(document.Url, document);
 								}

@@ -1215,7 +1215,7 @@ namespace MonoDevelop.MicroFramework
 			field.Name.StartsWith ("<>f__ref", StringComparison.Ordinal);
 		}
 
-		static bool IsClosureReferenceLocal (VariableDefinition local)
+		static bool IsClosureReferenceLocal (VariableDebugInformation local)
 		{
 			if (local.Name == null)
 				return false;
@@ -1226,7 +1226,7 @@ namespace MonoDevelop.MicroFramework
 			local.Name.StartsWith ("CS$<>", StringComparison.Ordinal);
 		}
 
-		static bool IsGeneratedTemporaryLocal (VariableDefinition local)
+		static bool IsGeneratedTemporaryLocal (VariableDebugInformation local)
 		{
 			// csc uses CS$ prefix for temporary variables and <>t__ prefix for async task-related state variables
 			return local.Name != null && (local.Name.StartsWith ("CS$", StringComparison.Ordinal) || local.Name.StartsWith ("<>t__", StringComparison.Ordinal));
@@ -1393,32 +1393,20 @@ namespace MonoDevelop.MicroFramework
 //			}
 		}
 
-		IEnumerable<ValueReference> GetLocals (CorEvaluationContext ctx, Scope scope, int offset, bool showHidden)
+		IEnumerable<ValueReference> GetLocals (CorEvaluationContext ctx, ScopeDebugInformation scope, int offset, bool showHidden)
 		{
 			if (ctx.Frame.FrameType != CorFrameType.ILFrame)
 				yield break;
 
-			MethodDefinition met = null;
 			if (scope == null) {
-				met = ctx.Frame.Function.GetMethodInfo (ctx.Session);
-				if (met != null) {
-					scope = met.Body.Scope;
-				} else {
-					throw new NotImplementedException ();
-					//lets asume this never happens on MicroFramework :)
-					//					int count = ctx.Frame.GetLocalVariablesCount ();
-					//					for (int n = 0; n < count; n++) {
-					//						int locn = n;
-					//						CorValRef vref = new CorValRef (delegate {
-					//							return ctx.Frame.GetLocalVariable (locn);
-					//						});
-					//						yield return new VariableValueReference (ctx, vref, "local_" + (n + 1), ObjectValueFlags.Variable);
-					//					}
-					//					yield break;
-				}
+				MethodDefinition met = ctx.Frame.Function.GetMethodInfo (ctx.Session);
+				scope = met?.DebugInformation?.Scope;
 			}
+			if (scope == null)
+				throw new NotImplementedException ();
 
-			foreach (var var in scope == null ? met.Body.Variables : scope.Variables) {
+			//foreach (var var in scope == null ? met.Body.Variables : scope.Variables) {
+			foreach (var var in scope.Variables) {
 				if (var.Name == "$site")
 					continue;
 				if (IsClosureReferenceLocal (var) && IsGeneratedType (var.Name)) {
