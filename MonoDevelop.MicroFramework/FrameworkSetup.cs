@@ -73,12 +73,14 @@ namespace MonoDevelop.MicroFramework
 		{
 			if (!Platform.IsWindows) {
 				var addinDir = Path.GetDirectoryName (Assembly.GetExecutingAssembly ().CodeBase).Replace ("file:", "");
-				var installRoot = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), ".NETMicroFramework");
+				var installRoot = InstallRoot;
 
 				SetupRegistry (installRoot);
 				SyncFrameworkDirectory (addinDir, installRoot);
 			}
 		}
+
+		public static string InstallRoot => Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), ".NETMicroFramework");
 	}
 }
 

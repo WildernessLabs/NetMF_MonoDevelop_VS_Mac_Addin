@@ -87,6 +87,7 @@
     <Compile Include="Debug\VariableValueReference.cs" />
     <Compile Include="FrameworkSetup.cs" />
     <Compile Include="Properties\AddinInfo.cs" />
+    <Compile Include="MicroFrameworkRuntimeFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\MicroFrameworkLibraryProject.xpt.xml">
