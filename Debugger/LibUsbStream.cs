@@ -48,22 +48,8 @@ namespace Microsoft.SPOT.Debugger
 					var desc = usbRegDevice.Device?.Info?.Descriptor;
 					if (desc == null)
 						continue;
-					if (desc.Class.Equals (LibUsbDotNet.Descriptors.ClassCodeType.PerInterface)) {
-						if(string.IsNullOrWhiteSpace(usbRegDevice.FullName))
-							continue;
-						var fullname = usbRegDevice.FullName.ToLower();
-						//MacBook keyboard became unresponsive after I accidentally started debugging on it...
-						//Lets try to hide most of devices
-						if(fullname.Contains("apple") ||
-						   fullname.Contains("key") ||
-						   fullname.Contains("mouse") ||
-						   fullname.Contains("touch") ||
-						   fullname.Contains("track") ||
-						   fullname.Contains("pad"))
-							continue;
-						result.Add(new PortDefinition_LibUsb(usbRegDevice.Name, usbRegDevice.Vid + "-" + usbRegDevice.Pid));
-						//TODO: Verify this is MicroFramework device by opening port and ask for device name...
-					}
+					if (desc.Class.Equals (LibUsbDotNet.Descriptors.ClassCodeType.PerInterface) && desc.VendorID == 0x22B1)
+						result.Add (new PortDefinition_LibUsb (usbRegDevice.Name, usbRegDevice.Vid + "-" + usbRegDevice.Pid));
 				}
 			}
 			catch {
