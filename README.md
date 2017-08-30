@@ -1,5 +1,10 @@
 This is the add-in for Visual Studio Mac, Xamarin Studio, and MonoDevelop that enables [.Net MicroFramework](http://www.netmf.com/) projects to be built on Mac and Linux. 
 
+## Using
+
+For more information see the [Getting Started with Netduino](http://developer.wildernesslabs.co/Netduino/Getting_Started/) guide, which covers installation and writing a first app.
+
+
 ## Installation 
 
 To install the add-in:
