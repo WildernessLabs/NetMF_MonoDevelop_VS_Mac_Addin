@@ -4,7 +4,7 @@ using Mono.Addins.Description;
 
 [assembly: Addin ("MicroFramework",
                   Namespace = "MonoDevelop",
-                  Version = "0.6.4",
+                  Version = "1.0",
                   Category = "IDE extensions")]
 
 [assembly: AddinName ("MicroFramework")]
