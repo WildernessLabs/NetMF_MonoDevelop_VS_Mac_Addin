@@ -21,9 +21,9 @@ To install the add-in:
 
 ## Authors
 
-The add-in was originally authored by David Karlas. 
+The add-in was originally authored by David Karlas. The original codebase can be found [here](https://github.com/davidkarlas/MonoDevelop.MicroFramework).
 
 ## Contributors
 
-Jeremie Laval, Bryan Costanich
+Jeremie Laval
 
