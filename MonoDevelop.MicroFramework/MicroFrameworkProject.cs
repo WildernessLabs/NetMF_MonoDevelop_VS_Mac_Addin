@@ -24,6 +24,8 @@ namespace MonoDevelop.MicroFramework
 			base.OnEndLoad ();
 			if (Project.CompileTarget != CompileTarget.Library)
 				ExecutionTargetsManager.DeviceListChanged += OnExecutionTargetsChanged;
+			if (FixUpProjectIfNeeded ())
+				IdeApp.ProjectOperations.SaveAsync (Project);
 		}
 
 		public override void Dispose ()
@@ -74,15 +76,18 @@ namespace MonoDevelop.MicroFramework
 			return new TargetFrameworkMoniker (".NETMicroFramework", "1.0");
 		}
 
-		protected override void Initialize ()
+		bool FixUpProjectIfNeeded ()
 		{
-			base.Initialize ();
-			var targetsBaseDir = "$(MSBuildExtensionsPath32)\\Microsoft\\.NET Micro Framework\\";
-			if (!Platform.IsWindows)
-				targetsBaseDir = "$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))\\.NETMicroFramework\\xbuild\\Microsoft\\.NET Micro Framework\\";
-			Project.ProjectProperties.SetValue ("NetMfTargetsBaseDir", targetsBaseDir, condition: "'$(NetMfTargetsBaseDir)'==''");
+			var targetsBaseDirWindows = "$(MSBuildExtensionsPath32)\\Microsoft\\.NET Micro Framework\\";
+			var targetsBaseDirOther = "$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))\\.NETMicroFramework\\xbuild\\Microsoft\\.NET Micro Framework\\";
+			Project.ProjectProperties.RemoveProperty ("NetMfTargetsBaseDir");
 			Project.RemoveImport ("$(MSBuildBinPath)\\Microsoft.CSharp.targets");
-			Project.AddImportIfMissing ("$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\\CSharp.Targets", "");
+			Project.RemoveImport ("$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\\CSharp.targets");
+			Project.AddImportIfMissing ($"{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets",
+			                            condition: $"Exists('{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets')");
+			Project.AddImportIfMissing ($"{targetsBaseDirOther}$(TargetFrameworkVersion)\\CSharp.targets",
+			                            condition: $"!Exists('{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets')");
+			return true;
 		}
 
 		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration, ProjectRunConfiguration runConfiguration)
