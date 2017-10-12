@@ -22,7 +22,11 @@ To install the add-in:
  1. Install the latest version of either Visual Studio for Mac, or [Xamarin Studio/MonoDevelop](http://www.monodevelop.com/download/)
  2. Install the **AddinMaker** maker from the extensions/add-ins manager (follow installation instructions 3-6 above, but search for `AddinMaker` instead).
  3. Clone project from GitHub and open the `MonoDevelop.MicroFramework.sln` solution with VS Mac/Xamarin Studio.
- 4. Make sure all the nuget packages are restored and then start debugging, which will open a new instance of VS Mac/Xamarin Studio that has the MicroFramework Add-in that just built enabled. 
+ 4. Make sure all the nuget packages are restored and then start debugging, which will open a new instance of VS Mac/Xamarin Studio that has the MicroFramework Add-in that just built enabled.
+
+### Creating an Add-in Package
+
+To create an addin package (`.mpack`), first, build the add-in in release mode, and then run the `CreateAddinPackage.sh` script from terminal.
 
 ## Authors
 

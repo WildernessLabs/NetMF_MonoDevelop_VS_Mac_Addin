@@ -87,24 +87,17 @@ namespace Microsoft.SPOT.Debugger
 					uint tk = TinyCLR_TypeSystem.SymbollessSupport.TinyCLRTokenFromMethodDefToken (frame.Function.Token);
 					uint md = TinyCLR_TypeSystem.ClassMemberIndexFromTinyCLRToken (tk, frame.Function.Assembly);
 					method = session.Engine.GetMethodName (md, true);
-					var reader = frame.Function.Assembly.DebugData;
-					if (reader != null) {
-						var sim = new MethodSymbols (new Mono.Cecil.MetadataToken (frame.Function.Token));
-						//Ugliest hack ever
-						if(reader is Mono.Cecil.Mdb.MdbReader) {
-							for(int i = 0; i < 100; i++)
-								sim.Variables.Add(new VariableDefinition(null));
-						}
-						reader.Read (sim);
-						InstructionSymbol prevSp = new InstructionSymbol (-1, null);
-						foreach (var sp in sim.Instructions) {
+					var debugData = frame.Function.GetMethodInfo (session)?.DebugInformation;
+					if (debugData != null) {
+						SequencePoint prevSp = null;
+						foreach (var sp in debugData.SequencePoints) {
 							if (sp.Offset > frame.IP)
 								break;
 							prevSp = sp;
 						}
 						if (prevSp.Offset != -1) {
-							line = prevSp.SequencePoint.StartLine;
-							file = prevSp.SequencePoint.Document.Url;
+							line = prevSp.StartLine;
+							file = prevSp.Document.Url;
 						}
 					}
 				}
