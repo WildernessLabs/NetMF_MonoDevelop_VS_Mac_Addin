@@ -24,8 +24,12 @@ namespace MonoDevelop.MicroFramework
 			base.OnEndLoad ();
 			if (Project.CompileTarget != CompileTarget.Library)
 				ExecutionTargetsManager.DeviceListChanged += OnExecutionTargetsChanged;
-			if (FixUpProjectIfNeeded ())
-				IdeApp.ProjectOperations.SaveAsync (Project);
+		}
+
+		protected override void Initialize ()
+		{
+			base.Initialize ();
+			FixUpProject ();
 		}
 
 		public override void Dispose ()
@@ -76,7 +80,7 @@ namespace MonoDevelop.MicroFramework
 			return new TargetFrameworkMoniker (".NETMicroFramework", "1.0");
 		}
 
-		bool FixUpProjectIfNeeded ()
+		void FixUpProject ()
 		{
 			var targetsBaseDirWindows = "$(MSBuildExtensionsPath32)\\Microsoft\\.NET Micro Framework\\";
 			var targetsBaseDirOther = "$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))\\.NETMicroFramework\\xbuild\\Microsoft\\.NET Micro Framework\\";
@@ -87,7 +91,6 @@ namespace MonoDevelop.MicroFramework
 			                            condition: $"Exists('{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets')");
 			Project.AddImportIfMissing ($"{targetsBaseDirOther}$(TargetFrameworkVersion)\\CSharp.targets",
 			                            condition: $"!Exists('{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets')");
-			return true;
 		}
 
 		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration, ProjectRunConfiguration runConfiguration)
