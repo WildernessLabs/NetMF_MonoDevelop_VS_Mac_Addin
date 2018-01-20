@@ -1,0 +1,9 @@
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/bin/Debug/Debugger.dll
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/bin/Debug/Debugger.pdb
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/bin/Debug/LibUsbDotNet.dll
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/bin/Debug/WinUsb.dll
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/bin/Debug/WinUsb.pdb
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/obj/Debug/Debugger.csprojResolveAssemblyReference.cache
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/obj/Debug/Debugger.csproj.CoreCompileInputs.cache
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/obj/Debug/Debugger.dll
+/Users/bryancostanich/GitRepos/wlabs_code/NetMF_MonoDevelop_VS_Mac_Addin/Debugger/obj/Debug/Debugger.pdb
