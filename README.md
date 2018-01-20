@@ -35,4 +35,4 @@ The add-in was originally authored by David Karlas. The original codebase can be
 ## Contributors
 
 Jeremie Laval
-
+Alex Corrado
