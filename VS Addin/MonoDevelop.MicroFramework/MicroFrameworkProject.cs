@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using MonoDevelop.Core.Serialization;
 using MonoDevelop.Ide;
+using MonoDevelop.Projects.MSBuild;
 
 namespace MonoDevelop.MicroFramework
 {
@@ -26,10 +27,10 @@ namespace MonoDevelop.MicroFramework
 				ExecutionTargetsManager.DeviceListChanged += OnExecutionTargetsChanged;
 		}
 
-		protected override void Initialize ()
+		protected override void OnPrepareForEvaluation (MSBuildProject project)
 		{
-			base.Initialize ();
-			FixUpProject ();
+			FixUpProject (project);
+			base.OnPrepareForEvaluation (project);
 		}
 
 		public override void Dispose ()
@@ -80,17 +81,19 @@ namespace MonoDevelop.MicroFramework
 			return new TargetFrameworkMoniker (".NETMicroFramework", "1.0");
 		}
 
-		void FixUpProject ()
+		static void FixUpProject (MSBuildProject project)
 		{
 			var targetsBaseDirWindows = "$(MSBuildExtensionsPath32)\\Microsoft\\.NET Micro Framework\\";
 			var targetsBaseDirOther = "$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))\\.NETMicroFramework\\xbuild\\Microsoft\\.NET Micro Framework\\";
-			Project.ProjectProperties.RemoveProperty ("NetMfTargetsBaseDir");
-			Project.RemoveImport ("$(MSBuildBinPath)\\Microsoft.CSharp.targets");
-			Project.RemoveImport ("$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\\CSharp.targets");
-			Project.AddImportIfMissing ($"{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets",
+			project.RemoveProperty ("NetMfTargetsBaseDir");
+			project.RemoveImport ("$(MSBuildBinPath)\\Microsoft.CSharp.targets");
+			project.RemoveImport ("$(MSBuildToolsPath)\\Microsoft.CSharp.targets");
+			project.RemoveImport ("$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\\CSharp.targets");
+			project.AddImportIfMissing ($"{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets",
 			                            condition: $"Exists('{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets')");
-			Project.AddImportIfMissing ($"{targetsBaseDirOther}$(TargetFrameworkVersion)\\CSharp.targets",
+			project.AddImportIfMissing ($"{targetsBaseDirOther}$(TargetFrameworkVersion)\\CSharp.targets",
 			                            condition: $"!Exists('{targetsBaseDirWindows}$(TargetFrameworkVersion)\\CSharp.targets')");
+			project.Evaluate ();
 		}
 
 		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration, ProjectRunConfiguration runConfiguration)
