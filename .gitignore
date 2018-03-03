@@ -8,3 +8,8 @@ MonoDevelop.MicroFramework/obj/
 MonoDevelop.MicroFramework/bin/
 !MonoDevelop.MicroFramework/Debug
 packages
+
+
+/obj
+/bin
+*.mpack
