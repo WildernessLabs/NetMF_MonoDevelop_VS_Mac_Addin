@@ -28,6 +28,10 @@ To install the add-in:
 
 To create an addin package (`.mpack`), first, build the add-in in release mode, and then run the `CreateAddinPackage.sh` script from terminal.
 
+#### Publishing
+
+When publishing, make sure to bump the version number in the `/Properties/AddinInfo.cs` file, as well as the `AssemblyInfo.cs` file.
+
 ## Authors
 
 The add-in was originally authored by David Karlas. The original codebase can be found [here](https://github.com/davidkarlas/MonoDevelop.MicroFramework).
