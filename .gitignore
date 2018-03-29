@@ -13,3 +13,6 @@ packages
 /obj
 /bin
 *.mpack
+/VS Addin/.vs
+bin
+obj
