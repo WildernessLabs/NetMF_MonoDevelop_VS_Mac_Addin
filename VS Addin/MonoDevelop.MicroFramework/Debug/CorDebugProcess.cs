@@ -506,7 +506,7 @@ namespace Microsoft.SPOT.Debugger
 					throw new Exception (DiagnosticStrings.DebugEngineAttachmentFailure);
 				}
 
-				CorDebugBreakpointBase breakpoint = new CLREventsBreakpoint (this);
+				CorDebugBreakpointBase breakpoint = new CLREventsBreakpoint (this, false);
 
 				if (m_fLaunched) {
 					#if EMULATOR

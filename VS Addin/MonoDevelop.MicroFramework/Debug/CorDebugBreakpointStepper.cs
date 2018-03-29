@@ -106,7 +106,7 @@ namespace Microsoft.SPOT.Debugger
 
 	public class CLREventsBreakpoint : CorDebugBreakpointBase
 	{
-		public CLREventsBreakpoint (CorDebugProcess process) : base (process)
+		public CLREventsBreakpoint (CorDebugProcess process, bool active = true) : base (process)
 		{
 			this.Kind = BreakpointDef.c_EXCEPTION_THROWN |
 			BreakpointDef.c_EXCEPTION_CAUGHT |
@@ -119,7 +119,7 @@ namespace Microsoft.SPOT.Debugger
 			BreakpointDef.c_ASSEMBLIES_LOADED |
 			BreakpointDef.c_BREAK;
 
-			this.Active = true;
+			this.Active = active;
 		}
 
 		public override void Hit (BreakpointDef breakpointDef)
