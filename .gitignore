@@ -16,3 +16,4 @@ packages
 /VS Addin/.vs
 bin
 obj
+.DS_Store
